@@ -30,7 +30,6 @@
         <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
         <a href="{{ url_for('students_list') }}" class="btn btn-outline-secondary btn-sm me-2">Clear</a>
 
-        <!-- Export button (keeps current query params) -->
         <a href="{{ url_for('students_list') }}?{% if selected_standard %}standard={{ selected_standard }}&{% endif %}{% if search_q %}q={{ search_q }}&{% endif %}export=csv"
            class="btn btn-success btn-sm">
            Export CSV
