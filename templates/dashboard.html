@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row g-3 mb-4">
+    <!-- Card 1: Total Students -->
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Total Students</h6>
+                <h2 class="card-title">{{ total_students }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2: Average Attendance -->
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Average Attendance</h6>
+                <h2 class="card-title">{{ avg_attendance }}%</h2>
+                <small class="text-muted">Across all students</small>
+            </div>
+        </div>
+    </div>
+
+   <!-- Card 3: Below 75% -->
+<div class="col-md-3">
+    <a href="{{ url_for('low_attendance') }}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Students &lt; 75% Attendance</h6>
+                <h2 class="card-title">{{ below_75 }}</h2>
+                <small class="text-muted">Click to view detailed list</small>
+            </div>
+        </div>
+    </a>
+</div>
+
+    <!-- Card 4: Fee Pending -->
+<div class="col-md-3">
+    <a href="{{ url_for('fees_pending') }}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Total Fee Pending</h6>
+                <h2 class="card-title">₹{{ "{:,}".format(total_pending_fee) }}</h2>
+                <small class="text-muted">Click to view pending list</small>
+            </div>
+        </div>
+    </a>
+</div>
+
+
+<hr class="my-4">
+
+<div class="row">
+    <div class="col-12">
+        <h3 class="mb-3">Class-wise Average Attendance (%)</h3>
+        <p class="text-muted">
+            This chart shows how each standard (1 to 10) is performing in terms of attendance.
+        </p>
+        <canvas id="attendanceChart" height="120"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+    const dataFromServer = {{ attendance_by_standard | tojson }};
+    const labels = ['Std 1', 'Std 2', 'Std 3', 'Std 4', 'Std 5', 'Std 6', 'Std 7', 'Std 8', 'Std 9', 'Std 10'];
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Average Attendance %',
+                data: dataFromServer,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

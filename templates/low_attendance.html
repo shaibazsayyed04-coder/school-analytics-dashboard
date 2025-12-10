@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Low Attendance Students (&lt; 75%)</h1>
+    <div>
+        <a href="{{ url_for('low_attendance') }}?export=csv" class="btn btn-success btn-sm me-2">
+            Export CSV
+        </a>
+        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm">← Back to Dashboard</a>
+    </div>
+</div>
+
+
+
+{% if students %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Student Name</th>
+                    <th>Standard</th>
+                    <th>Roll No</th>
+                    <th>Attendance %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in students %}
+                <tr class="{% if s.percent < 75 %}table-danger{% endif %}">
+                    <td>{{ loop.index }}</td>
+<td>
+  <a href="{{ url_for('student_detail', student_id=s.id) }}">
+    {{ s.name }}
+  </a>
+</td>
+                    <td>{{ s.standard }}</td>
+                    <td>{{ s.roll_no }}</td>
+                    <td>{{ s.percent }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-success">
+        All students currently have attendance above 75%.
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>School Analytics</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Optional: your custom CSS later -->
+    {# <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> #}
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand mb-0 h1" href="{{ url_for('index') }}">
+            School Analytics Dashboard
+        </a>
+
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link text-light" href="{{ url_for('index') }}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="{{ url_for('low_attendance') }}">Low Attendance</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="{{ url_for('fees_pending') }}">Fees Pending</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="{{ url_for('students_list') }}">All Students</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+<div class="container mb-5">
+    {% block content %}{% endblock %}
+</div>
+
+<!-- Bootstrap JS (for components, not mandatory right now) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Place for page-specific JS -->
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

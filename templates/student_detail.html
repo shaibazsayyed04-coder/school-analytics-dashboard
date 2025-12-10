@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Student Detail</h1>
+    <a href="{{ url_for('low_attendance') }}" class="btn btn-outline-secondary btn-sm">
+        ← Back to Low Attendance List
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- Basic info -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title mb-3">{{ student.name }}</h5>
+                <p class="mb-1"><strong>Standard:</strong> {{ student.standard }}</p>
+                <p class="mb-1"><strong>Roll No:</strong> {{ student.roll_no }}</p>
+                <p class="mb-1"><strong>Parent:</strong> {{ student.parent_name }}</p>
+                <p class="mb-1"><strong>Parent Email:</strong> {{ student.parent_email }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance summary -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Attendance Summary</h6>
+                <h2 class="card-title mb-3">{{ percent }}%</h2>
+                <p class="mb-1"><strong>Total Days:</strong> {{ total_days }}</p>
+                <p class="mb-1"><strong>Present:</strong> {{ present_days }}</p>
+                <p class="mb-1"><strong>Absent:</strong> {{ absent_days }}</p>
+                {% if percent < 75 %}
+                    <span class="badge bg-danger">Below 75% – At Risk</span>
+                {% else %}
+                    <span class="badge bg-success">Good Attendance</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Fee summary -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Fee Status</h6>
+                {% if fee %}
+                    <p class="mb-1"><strong>Total Fee:</strong> ₹{{ "{:,}".format(fee.total_fee|int) }}</p>
+                    <p class="mb-1"><strong>Paid:</strong> ₹{{ "{:,}".format(fee.paid_amount|int) }}</p>
+                    <p class="mb-1"><strong>Due:</strong> ₹{{ "{:,}".format(fee.due_amount|int) }}</p>
+                    {% if fee.due_amount > 0 %}
+                        <span class="badge bg-warning text-dark">Payment Pending</span>
+                    {% else %}
+                        <span class="badge bg-success">No Dues</span>
+                    {% endif %}
+                {% else %}
+                    <p>No fee record found for this student.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>All Students</h1>
+    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm">
+        ← Back to Dashboard
+    </a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <label for="standard" class="form-label">Filter by Standard</label>
+        <select name="standard" id="standard" class="form-select form-select-sm">
+            <option value="">All</option>
+            {% for std in range(1, 11) %}
+                <option value="{{ std }}" {% if selected_standard == std %}selected{% endif %}>
+                    Std {{ std }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-auto">
+        <label for="q" class="form-label">Search name</label>
+        <input type="text" name="q" id="q" class="form-control form-control-sm" placeholder="Search student name" value="{{ search_q or '' }}">
+    </div>
+
+    <div class="col-auto d-flex align-items-end">
+        <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+        <a href="{{ url_for('students_list') }}" class="btn btn-outline-secondary btn-sm me-2">Clear</a>
+
+        <!-- Export button (keeps current query params) -->
+        <a href="{{ url_for('students_list') }}?{% if selected_standard %}standard={{ selected_standard }}&{% endif %}{% if search_q %}q={{ search_q }}&{% endif %}export=csv"
+           class="btn btn-success btn-sm">
+           Export CSV
+        </a>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Standard</th>
+                <th>Roll No</th>
+                <th>Parent</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in students %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>
+                    <a href="{{ url_for('student_detail', student_id=s.id) }}">
+                        {{ s.name }}
+                    </a>
+                </td>
+                <td>{{ s.standard }}</td>
+                <td>{{ s.roll_no }}</td>
+                <td>{{ s.parent_name }}</td>
+                <td>{{ s.parent_email }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
