@@ -4,7 +4,7 @@
 <h1 class="mb-4">Dashboard</h1>
 
 <div class="row g-3 mb-4">
-    <!-- Card 1: Total Students -->
+
     <div class="col-md-3">
         <div class="card shadow-sm border-0">
             <div class="card-body">
@@ -14,7 +14,6 @@
         </div>
     </div>
 
-    <!-- Card 2: Average Attendance -->
     <div class="col-md-3">
         <div class="card shadow-sm border-0">
             <div class="card-body">
@@ -25,7 +24,6 @@
         </div>
     </div>
 
-   <!-- Card 3: Below 75% -->
 <div class="col-md-3">
     <a href="{{ url_for('low_attendance') }}" class="text-decoration-none text-dark">
         <div class="card shadow-sm border-0">
@@ -38,7 +36,6 @@
     </a>
 </div>
 
-    <!-- Card 4: Fee Pending -->
 <div class="col-md-3">
     <a href="{{ url_for('fees_pending') }}" class="text-decoration-none text-dark">
         <div class="card shadow-sm border-0">
@@ -66,8 +63,8 @@
 {% endblock %}
 
 {% block scripts %}
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
     const ctx = document.getElementById('attendanceChart').getContext('2d');
