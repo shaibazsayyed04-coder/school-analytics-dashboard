@@ -1,27 +1,26 @@
 from flask import Flask, render_template, abort, request, Response
 from models import db, Student, Attendance, Fee, Exam
-from sqlalchemy import func  # for sum() etc.
+from sqlalchemy import func  
 import csv
 
 app = Flask(__name__)
 
-# SQLite database config
+
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///school.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 
-# Create tables (if not created)
+
 with app.app_context():
     db.create_all()
 
 
 @app.route("/")
 def index():
-    # ---------- BASIC COUNTS ----------
+
     total_students = Student.query.count()
 
-    # ---------- ATTENDANCE ANALYTICS ----------
     student_attendance_percents = []
     students = Student.query.all()
 
@@ -44,11 +43,9 @@ def index():
         avg_attendance = 0
         below_75 = 0
 
-    # ---------- FEE ANALYTICS ----------
     total_pending_fee = db.session.query(func.sum(Fee.due_amount)).scalar() or 0
     total_pending_fee = int(total_pending_fee)
 
-    # ---------- CLASS-WISE ATTENDANCE (FOR CHART) ----------
     attendance_by_standard = []
     for std in range(1, 11):
         std_students = Student.query.filter_by(standard=std).all()
@@ -97,7 +94,7 @@ def low_attendance():
 
         percent = round((present_days / total_days) * 100, 1)
 
-        if percent < 75:   # threshold
+        if percent < 75:  
             low_students.append({
                 "id": s.id,
                 "name": s.name,
@@ -106,13 +103,11 @@ def low_attendance():
                 "percent": percent
             })
 
-    # sort by standard then roll number
     low_students.sort(key=lambda x: (x["standard"], x["roll_no"]))
 
-    # ---- CSV Export ----
     if export == "csv":
         def generate():
-            # header
+
             yield ",".join(["ID", "Name", "Standard", "Roll No", "Attendance %"]) + "\n"
             for s in low_students:
                 row = [
@@ -139,7 +134,6 @@ def student_detail(student_id):
     if not student:
         return abort(404)
 
-    # Attendance summary
     total_days = Attendance.query.filter_by(student_id=student.id).count()
     present_days = Attendance.query.filter_by(
         student_id=student.id, status="Present"
@@ -153,7 +147,6 @@ def student_detail(student_id):
     else:
         percent = 0
 
-    # Fee summary
     fee = Fee.query.filter_by(student_id=student.id).first()
 
     return render_template(
@@ -171,7 +164,6 @@ def student_detail(student_id):
 def fees_pending():
     export = request.args.get("export", default="", type=str).lower()
 
-    # All students with some due amount
     fee_rows = Fee.query.filter(Fee.due_amount > 0).all()
     pending = []
 
@@ -190,13 +182,11 @@ def fees_pending():
             "due": int(f.due_amount),
         })
 
-    # Sort, highest due first
     pending.sort(key=lambda x: x["due"], reverse=True)
 
-    # ---- CSV Export ----
     if export == "csv":
         def generate():
-            # header
+
             yield ",".join(["ID", "Name", "Standard", "Roll No", "Total Fee", "Paid", "Due"]) + "\n"
             for s in pending:
                 row = [
@@ -221,10 +211,10 @@ def fees_pending():
 
 @app.route("/students")
 def students_list():
-    # optional filter from query string: ?standard=5
+
     standard_filter = request.args.get("standard", type=int)
     search_q = request.args.get("q", default="", type=str).strip()
-    export = request.args.get("export", default="", type=str).lower()  # if 'csv' then export
+    export = request.args.get("export", default="", type=str).lower()  
 
     query = Student.query
 
@@ -232,15 +222,14 @@ def students_list():
         query = query.filter_by(standard=standard_filter)
 
     if search_q:
-        # simple case-insensitive partial match on name
+
         query = query.filter(Student.name.ilike(f"%{search_q}%"))
 
     students = query.order_by(Student.standard, Student.roll_no).all()
 
-    # If export requested, stream CSV response
     if export == "csv":
         def generate():
-            # header
+
             yield ",".join(["ID", "Name", "Standard", "Roll No", "Parent", "Email"]) + "\n"
             for s in students:
                 row = [
