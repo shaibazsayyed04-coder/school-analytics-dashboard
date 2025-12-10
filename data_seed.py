@@ -5,14 +5,13 @@ from datetime import date, timedelta
 import random
 
 with app.app_context():
-    # ⚠ WARNING: This will delete old data
+
     db.drop_all()
     db.create_all()
 
-    # Create 500 students (Std 1 to 10, 50 each)
     students = []
-    for std in range(1, 11):           # 1 to 10
-        for r in range(1, 51):         # 1 to 50
+    for std in range(1, 11):           
+        for r in range(1, 51):         
             s = Student(
                 name=f"Student_{std}_{r}",
                 standard=std,
@@ -26,7 +25,6 @@ with app.app_context():
     db.session.commit()
     print(f"✅ Created {len(students)} students")
 
-    # Attendance: 60 working days
     start_date = date(2025, 6, 1)
     days = 60
 
@@ -34,7 +32,6 @@ with app.app_context():
         for i in range(days):
             d = start_date + timedelta(days=i)
 
-            # Skip Saturday (5) and Sunday (6)
             if d.weekday() >= 5:
                 continue
 
@@ -45,7 +42,6 @@ with app.app_context():
     db.session.commit()
     print("✅ Attendance records created")
 
-    # Fee data (simple logic)
     for s in students:
         total_fee = 20000
         paid = random.choice([20000, 15000, 10000, 5000])
